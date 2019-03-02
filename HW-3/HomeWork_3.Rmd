@@ -1,0 +1,408 @@
+---
+title: "HomeWork_3"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+# Setting Data set
+
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+library(foreign)
+
+ess.spain <- read.spss(
+  file="/Users/Lesnykh/Desktop/R_Folder/HW-1/ESS8ES.sav",
+  use.value.labels=FALSE,
+  use.missings=TRUE,
+  to.data.frame=TRUE
+)
+```
+
+This document would once more time present the results of the HomeWork-1 but in a more formal way.
+
+The given data set was conducted during the 8-th wave of the ESSS reserch. It includes the variables, that measure importance of various life values of people living in Spain.
+
+```{r include=FALSE}
+Spain <- subset(
+  x=ess.spain,
+  select=c("idno", "gndr", "ipcrtiv", "imprich", "ipeqopt", "ipshabt", "impsafe", "impdiff", "ipfrule", "ipudrst", "ipmodst", "ipgdtim", "impfree", "iphlppl", "ipsuces", "ipstrgv", "ipadvnt", "ipbhprp", "iprspot", "iplylfr", "impenv", "imptrad", "impfun", "agea", "eduyrs", "domicil")
+)
+```
+
+Life values variables are coded from the most positive to the most negative.
+For the convenience of interpretation, the encoding was performed.
+
+```{r include=FALSE}
+library(car)
+library(tidyr)
+library(dplyr)
+library(magrittr)
+library(sjmisc)
+library(ggplot2)
+library(reshape2)
+library(magrittr)
+library(plotly)
+library(car)
+
+
+Spain$ipcrtiv.recoded <- Recode(var=Spain$ipcrtiv,
+                                recodes= "1=6; 2=5; 3=4; 4=3; 5=2; 6=1; NA=NA; else=0")
+
+Spain$imprich.recoded <- Recode(var=Spain$imprich,
+                                recodes= "1=6; 2=5; 3=4; 4=3; 5=2; 6=1; NA=NA; else=0")
+
+Spain$ipeqopt.recoded <- Recode(var=Spain$ipeqopt,
+                                recodes= "1=6; 2=5; 3=4; 4=3; 5=2; 6=1; NA=NA; else=0")
+
+Spain$ipshabt.recoded <- Recode(var=Spain$ipshabt,
+                                recodes= "1=6; 2=5; 3=4; 4=3; 5=2; 6=1; NA=NA; else=0")
+
+Spain$impsafe.recoded <- Recode(var=Spain$impsafe,
+                                recodes= "1=6; 2=5; 3=4; 4=3; 5=2; 6=1; NA=NA; else=0")
+
+Spain$impdiff.recoded <- Recode(var=Spain$impdiff,
+                                recodes= "1=6; 2=5; 3=4; 4=3; 5=2; 6=1; NA=NA; else=0")
+
+Spain$ipfrule.recoded <- Recode(var=Spain$ipfrule,
+                                recodes= "1=6; 2=5; 3=4; 4=3; 5=2; 6=1; NA=NA; else=0")
+
+Spain$ipudrst.recoded <- Recode(var=Spain$ipudrst,
+                                recodes= "1=6; 2=5; 3=4; 4=3; 5=2; 6=1; NA=NA; else=0")
+
+Spain$ipmodst.recoded <- Recode(var=Spain$ipmodst,
+                                recodes= "1=6; 2=5; 3=4; 4=3; 5=2; 6=1; NA=NA; else=0")
+
+Spain$ipgdtim.recoded <- Recode(var=Spain$ipgdtim,
+                                recodes= "1=6; 2=5; 3=4; 4=3; 5=2; 6=1; NA=NA; else=0")
+
+Spain$impfree.recoded <- Recode(var=Spain$impfree,
+                                recodes= "1=6; 2=5; 3=4; 4=3; 5=2; 6=1; NA=NA; else=0")
+
+Spain$iphlppl.recoded <- Recode(var=Spain$iphlppl,
+                                recodes= "1=6; 2=5; 3=4; 4=3; 5=2; 6=1; NA=NA; else=0")
+
+Spain$ipsuces.recoded <- Recode(var=Spain$ipsuces,
+                                recodes= "1=6; 2=5; 3=4; 4=3; 5=2; 6=1; NA=NA; else=0")
+
+Spain$ipstrgv.recoded <- Recode(var=Spain$ipstrgv,
+                                recodes= "1=6; 2=5; 3=4; 4=3; 5=2; 6=1; NA=NA; else=0")
+
+Spain$ipadvnt.recoded <- Recode(var=Spain$ipadvnt,
+                                recodes= "1=6; 2=5; 3=4; 4=3; 5=2; 6=1; NA=NA; else=0")
+
+Spain$ipbhprp.recoded <- Recode(var=Spain$ipbhprp,
+                                recodes= "1=6; 2=5; 3=4; 4=3; 5=2; 6=1; NA=NA; else=0")
+
+Spain$iprspot.recoded <- Recode(var=Spain$iprspot,
+                                recodes= "1=6; 2=5; 3=4; 4=3; 5=2; 6=1; NA=NA; else=0")
+
+Spain$iplylfr.recoded <- Recode(var=Spain$iplylfr,
+                                recodes= "1=6; 2=5; 3=4; 4=3; 5=2; 6=1; NA=NA; else=0")
+
+Spain$impenv.recoded <- Recode(var=Spain$impenv,
+                                recodes= "1=6; 2=5; 3=4; 4=3; 5=2; 6=1; NA=NA; else=0")
+
+Spain$imptrad.recoded <- Recode(var=Spain$imptrad,
+                                recodes= "1=6; 2=5; 3=4; 4=3; 5=2; 6=1; NA=NA; else=0")
+
+Spain$impfun.recoded <- Recode(var=Spain$impfun,
+                                recodes= "1=6; 2=5; 3=4; 4=3; 5=2; 6=1; NA=NA; else=0")
+```
+
+# Description of the Variables
+
+The variables that would be used in the following analysis are the next ones
+
+IPSTRGV - Important that government is strong and ensures safety
+IPEQOPT - Important that people are treated equally and have equal opportunities
+IMPSAFE - Important to live in secure and safe surroundings
+IPFRULE - Important to do what is told and follow rules
+IPMODST - Important to be humble and modest, not draw attention
+IPBHPRP - Important to behave properly
+
+In the course of further analysis, it will be considered how in Spain the value of a strong government can be related to other life values.
+
+In the course of further analysis, the following hypotheses will be tested:
+
+  1. The value of a strong goverment (IPSTRGV) has a strong positive relationship with the           value of equal treatment of all people and the availability of equal opportunities for         all (IPEQOPT).
+  
+  2. The value of a strong state (IPSTRGV) has a strong positive relationship with value safe        environments (IMPSAFE).
+
+  3. The value of a strong state (IPSTRGV) has a strong positive relationship with the value         follow the accepted rules (IPFRULE).
+
+  4. The value of a strong state (IPSTRGV) has a strong positive relationship with value             be modest and secretive, do not attract attention (IPMODST).
+
+  5. The value of a strong state (IPSTRGV) has a strong positive relationship with the value         behave correctly (IPBHPRP).
+
+  6. The value of following the accepted rules (IPFRULE) and the value of behaving correctly         (IPBHPRP) by their content are strongly interrelated and together can have a strong            connection with value of a strong state (IPSTRGV).
+
+To confirm or refuse the hypotheses put forward, we will use linear regression.
+To test hypotheses 1-5, it is necessary to construct multiple linear regression. To check the Hypothesis 6 it is necessary to perform on a similar regression with the interaction effect of predictors.
+
+In addition to the above independent variables, some socio-demographic characteristics of respondents have been also put in the model, such as gender (GNDR), age (AGEA) and type of settlement (DOMICIL).
+
+Before testing the hypotheses and constructting regressions, we will analyze descriptive statistics of the dependent variable. We will look at the distribution of the answers.
+
+
+# Chart 1
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+library("ggplot2")
+library("lattice")
+
+Spain$ipstrgv.recoded.let <- Recode(Spain$ipstrgv.recoded, recodes="1='Not like me at all'; 2='Not like me'; 3='A little like me'; 4='Somewhat like me'; 5='Like me'; 6='Very much like me'")
+Spain$ipstrgv.recoded.let <- as.vector(Spain$ipstrgv.recoded)
+
+
+ggplot(Spain, aes(x=Spain$ipstrgv.recoded.let))+
+  geom_bar(colour = "blue", fill = "white")+
+  scale_y_continuous(breaks=seq(0, 850, 150))+
+  scale_x_continuous(breaks=seq(1,6,1))+
+  theme_minimal()+
+  labs(x="It is Important for Me that Government is Strong and Ensures Safety", y="Amount of answers", title="Distribution of Answers on the Importance of the Strong Government", caption="ESSS-8")+
+  theme(axis.line.x = element_line(size=0.6),
+      axis.line.y = element_line(size=0.6),
+      panel.grid.major.x = element_blank(),
+      panel.grid.minor.x = element_blank()
+      )
+```
+The Legend of the Importance that Government is Strong and Ensures Safety
+
+1 Not like me at all
+2 Not like me
+3 A little like me
+4 Somewhat like me
+5 Like me
+6 Very much like me
+
+That histogram was chosen to show that type of connection because it is perfectly fittable for it. It allows us to see what answers were given more often in comparison to others.
+
+Based on it we can say that the most amount of answers given belongs to 6 - Very much like me. The distribution is exponentional: 1 "Not like me at all" has the smallest amount of answers and 6 - the largest one.
+
+# Linear Regression
+
+Next, proceed with constructing a regression model. The following table demonstrates us the parameters for regression
+
+```{r echo=FALSE}
+lreg1 = lm(ipstrgv.recoded ~ ipeqopt.recoded+impsafe.recoded+ipfrule.recoded+ipmodst.recoded+ipbhprp.recoded+agea+as.factor(domicil),data=Spain)
+
+coef.table <- broom::tidy(lreg1)
+
+kbl.tbl <-knitr::kable(coef.table, format="html", digits=2)
+
+kableExtra::kable_styling(kbl.tbl, bootstrap_options=c("hover", "striped", "condensed")) 
+
+```
+
+That regression mode is fittable for testing hypotheses 1-5. Before proceeding with the interpretation, we will check the assumptions for multicollinearity and homoskedasticity
+
+```{r echo=FALSE}
+knitr::kable(car::vif(lreg1))
+```
+
+Since the values of all variables are close to 1, the independent variables are not multicollinear
+
+```{r include=FALSE}
+library(lmtest)
+library(zoo)
+```
+
+```{r echo=FALSE}
+bptest(lreg1)
+```
+
+Since the test is statistically significant, the data is characterized by heteroscedasticity. Consequently, the data is scattered too far from the constructed regression line, the model is not relevant for testing hypotheses. However, since the purpose of this assignment is not to get the corresponding reality of the conclusions, then the model will be interpreted.
+
+
+The equation of the regression model is as follows:
+
+  Y = 1.43 + 0.09*ipeqopt.recoded + 0.37*impsafe.recoded + 0.12*ipfrule.recoded + 0.05*ipmodst.recoded + 0.1*ipbhprp.recoded
+
+Interpretation of the model is the following (at the level of 95% statistical probability): 
+
+The model is significant (2.2e-16 <0.05);
+
+The coefficient of determination is 0.24, hence the model explains 24% variance dispercion;
+
+ * If all independent variables are 0, the value of Y is 1.43;
+
+ * If ipeqopt.recoded is changed to 1, Y is incremented by 0.1;
+
+ * If impsafe.recoded is changed to 1, Y is incremented by 0.37;
+
+ * If ipfrule.recoded is changed to 1, Y is incremented by 0.12;
+
+ * If ipmodst.recoded is changed to 1, Y is incremented by 0.05;
+
+ * If ipbhprp.recoded is changed to 1, Y is incremented by 0.1.
+
+In the constructed model, the variables of vital values are significant, variables of socio-demographic characteristics are insignificant.
+
+# Creating the Behaviour Variable
+
+In order visualise the data I will not choose the dependent variable I used in the regression model.
+That variable is a 6-scale ordinal variable and it doesn't let me to visualise the data in a proper and understandable way.
+
+In order to build the needed graphs 2 and 3, I will use a part from my HomeWork 2. I will take one factor, Behavior (one of the strong predictors of that factor is the dependent variable of linear regression I built in the HomeWork1 - IPSTRGV - Important that government is strong and ensures safety). In order to visualise the data in a readible and a understandble way, I constructed the variable Behaviour, based and the factor from the HomeWork-2. That variable is total sum of the predictors conducting the facor Behaviour 
+
+(Behaviour <- ipbhprp.recoded+ipstrgv.recoded+imptrad.recoded+iprspot.recoded)
+
+As a result of the previous operation, I created the variable Behaviour, which distribution is from 4 for 24. The variable's meaning for each respondent is following:
+
+Scale from 4 to 8 = Behaviour isn't very important
+
+Scale from 9 to 13 = Behaviour isn't important
+
+Scale from 14 to 18 = Behaviour is  important
+
+Scale from 19 to 24 = Behaviour is very important
+
+That is the way I decided to get a variable with a larger distribution. I understand that the validity of that variable is not tested, but I recognize that the prime task of that HomeWork is not to get a realistic conclusions of the reaity but to demonstrate my ability to creat different kinds of charts and visualise the data.
+
+# Graph 2
+
+The graph 2 is the following one.
+
+```{r include=FALSE}
+Spain$Behaviour <- Spain$ipbhprp.recoded+Spain$ipstrgv.recoded+Spain$imptrad.recoded+Spain$iprspot.recoded
+
+Spain$Behaviour <- as.vector(Spain$Behaviour)
+```
+
+```{r echo=FALSE}
+car::scatterplot(Spain$Behaviour ~ Spain$agea, Spain,
+                 xlab="Distribution of Age",
+                 ylab="Distribution of Importance of Behaviour")
+
+```
+
+
+That kind of chart was chosen for several reasons. First of all, it allows us to see the distribution of the dependent variable and independet variables. Also, it lets us to se the connection between them. According to that chart, with age the importance of the behavior actually grows. It can be explained by the idea that with time and age and experience people realize the importance of that life value.
+
+Thus, the value of a strong state has a strong positive relationship with value safe environments and less strong with the rest of the values in the model. Therefore,with the help of the constructed model can confirm hypotheses 1-5, but taking into account that the data is heteroscedastic.
+
+# Graph 3
+
+The graph 3 is the following one. It has interactive effects.
+
+```{r echo=FALSE}
+
+Spain$gndr <- as.vector(Spain$gndr)
+Spain$domicil <- as.vector(Spain$domicil)
+
+# I really tried using the discriate variables, but the graph wouldn't be build normaly, I don't know why
+
+g <- ggplot(Spain, aes(x=Behaviour, y=agea, color=gndr, size = domicil))+
+  geom_jitter()+
+  theme_minimal()+
+  labs(x="The scale of the Importance of the Behaviour", y="Age", title="The Link between the Behaviour and Varialbes of Age, Gender and Domicile")+
+  scale_color_continuous(name="Gender")+
+  scale_size_continuous(name="Type of the Domicile")+
+  theme(axis.line.x = element_line(size=0.6),
+      axis.line.y = element_line(size=0.6)
+      )
+
+p <- ggplotly(g)
+
+p
+
+```
+The legend of the variables is following:
+
+Gender:
+
+1. Male
+2. Female
+
+Domicile:
+
+1. A big city
+2. The suburbs or outskirts of a big city
+3. A town or a small city
+4. A country village
+5. A farm or home in the countryside
+
+The type of chart was chosen because it lets us to visualise the links and conections and the respondets themselves. There we can see that for the younger respondents the importance of the Behavior has broader distribution. People of the age of about 60 and more believe the behaviour to be a more important life value. 
+
+# Creating the Regression with Interaction Effect
+
+Now hypothesis 6 will be tested. To test it, a similar regression model will be applied, but with the predictors interaction effect included in it.
+
+```{r echo=FALSE}
+lreg2 = lm(ipstrgv.recoded ~ ipeqopt.recoded+impsafe.recoded+ipfrule.recoded+ipmodst.recoded+
+         ipbhprp.recoded+agea+as.factor(domicil)+ipbhprp.recoded:ipfrule.recoded,
+         data=Spain)
+
+coef.table1 <- broom::tidy(lreg2)
+
+kbl.tbl1 <-knitr::kable(coef.table1, format="html", digits=2)
+
+kableExtra::kable_styling(kbl.tbl1, bootstrap_options=c("hover", "striped", "condensed")) 
+
+```
+
+The interaction effect in this model is "ipbhprp.recoded: ipfrule.recoded".
+
+According to this model, the interaction effect is not statistically significant (0.67> 0.05).
+Based on the constructed model, one can refuse the hypothesis about the interaction of values to follow accepted rules and behave correctly.
+
+# Creating the Ordinal Regression
+
+Further, for the secondary testing of hypotheses 1-5, an ordinal regression will be constructed.
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+library(MASS)
+
+Spain$ipstrgv.recoded.f <- factor(Spain$ipstrgv.recoded, ordered=TRUE)
+
+
+oreg1 <- polr(ipstrgv.recoded.f ~ impsafe.recoded+ipfrule.recoded+ipmodst.recoded+
+                ipbhprp.recoded,
+              data=Spain, Hess=TRUE)
+
+
+ctable <- coef(summary(oreg1))
+ctable
+
+p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
+ctable <- cbind(ctable, "p value" = p)
+
+ctable
+
+ci <- confint(oreg1)
+
+exp(coef(oreg1))
+
+exp(cbind(OR = coef(oreg1), ci))
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+coef.table2 <- broom::tidy(oreg1)
+
+kbl.tbl2 <-knitr::kable(coef.table2, format="html", digits=2)
+
+kableExtra::kable_styling(kbl.tbl2, bootstrap_options=c("hover", "striped", "condensed")) 
+
+```
+
+  1. One unit increase in "impsafe.recoded" the odds of value 6 of "ipstrgv.recoded.f" versus values       1-5 of "ipstrgv.recoded.f" combined are 2.05 greater.
+
+  2. One unit increase in "ipfrule.recoded" the odds of value 6 of "ipstrgv.recoded.f" versus values       1-5 of "ipstrgv.recoded.f" combined are 1.2 greater.
+
+  3. One unit increase in "ipmodst.recoded" the odds of value 6 of "ipstrgv.recoded.f" versus values       1-5 of "ipstrgv.recoded.f" combined are 1.25 greater.
+
+  4. One unit increase in "ipbhprp.recode" the odds of value 6 of "ipstrgv.recoded.f" versus values       1-5 of "ipstrgv.recoded.f" combined are 1.23 greater.
+
+Based on comparing of the two constructed model, the results are analogical. 
+The strongest influence on the importance of the strong governemt has the value of the safe surroundings.
+
+
+
+
+
+
+
+
+
